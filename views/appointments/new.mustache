@@ -1,0 +1,73 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1>Agendar: {{service.name}}</h1>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Detalhes do Serviço</h5>
+                    <p><strong>Prestador:</strong> {{service.prestador_name}}</p>
+                    <p><strong>Duração:</strong> {{service.duration}} minutos</p>
+                    <p><strong>Preço:</strong> R$ {{service.price}}</p>
+                </div>
+            </div>
+
+            <form id="appointmentForm">
+                <div class="mb-3">
+                    <label for="appointment_date" class="form-label">Data e Hora</label>
+                    <input type="datetime-local" class="form-control" id="appointment_date" name="appointment_date" required>
+                    <small class="text-muted">Escolha a data e hora que você deseja agendar</small>
+                </div>
+
+                <input type="hidden" id="service_id" name="service_id" value="{{service.id}}">
+
+                <button type="submit" class="btn btn-primary">Agendar</button>
+                <a href="/services/{{service.id}}" class="btn btn-secondary">Cancelar</a>
+            </form>
+
+            <div id="successMessage" class="alert alert-success mt-3" style="display:none;"></div>
+            <div id="errorMessage" class="alert alert-danger mt-3" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = {
+        service_id: document.getElementById('service_id').value,
+        appointment_date: document.getElementById('appointment_date').value
+    };
+
+    try {
+        const response = await fetch('/appointments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('successMessage').textContent = data.message;
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+
+            setTimeout(() => {
+                window.location.href = '/appointments/my-appointments';
+            }, 2000);
+        } else {
+            document.getElementById('errorMessage').textContent = data.error || 'Erro ao agendar';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+    } catch (error) {
+        document.getElementById('errorMessage').textContent = 'Erro ao processar agendamento';
+        document.getElementById('errorMessage').style.display = 'block';
+    }
+});
+</script>
+

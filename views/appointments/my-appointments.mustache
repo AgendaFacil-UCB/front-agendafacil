@@ -1,0 +1,86 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Meus Agendamentos</h1>
+
+            {{#appointments}}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5 class="card-title">{{service_name}}</h5>
+                                <p class="card-text">
+                                    <strong>Prestador:</strong> {{prestador_name}}<br>
+                                    <strong>Data/Hora:</strong>
+                                    <span class="badge bg-info">{{appointment_date}}</span><br>
+                                    <strong>Status:</strong>
+                                    {{#isPendente}}
+                                        <span class="badge bg-warning">Pendente</span>
+                                    {{/isPendente}}
+                                    {{#isConfirmado}}
+                                        <span class="badge bg-success">Confirmado</span>
+                                    {{/isConfirmado}}
+                                    {{#isCancelado}}
+                                        <span class="badge bg-danger">Cancelado</span>
+                                    {{/isCancelado}}
+                                    {{#isConcluido}}
+                                        <span class="badge bg-secondary">Concluído</span>
+                                    {{/isConcluido}}
+                                </p>
+                                <p class="card-text">
+                                    <strong>Telefone do Prestador:</strong> {{prestador_phone}}
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                {{#isPendente}}
+                                    <button class="btn btn-danger btn-sm cancel-appointment" data-id="{{id}}">
+                                        Cancelar
+                                    </button>
+                                {{/isPendente}}
+                                {{#isConfirmado}}
+                                    <button class="btn btn-danger btn-sm cancel-appointment" data-id="{{id}}">
+                                        Cancelar
+                                    </button>
+                                {{/isConfirmado}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/appointments}}
+
+            {{^appointments}}
+                <div class="alert alert-info">
+                    Você não possui agendamentos. <a href="/services">Clique aqui</a> para agendar um serviço.
+                </div>
+            {{/appointments}}
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.cancel-appointment').forEach(button => {
+    button.addEventListener('click', async function() {
+        if (!confirm('Deseja realmente cancelar este agendamento?')) return;
+
+        const appointmentId = this.getAttribute('data-id');
+
+        try {
+            const response = await fetch(`/appointments/${appointmentId}/cancel`, {
+                method: 'POST'
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.error || 'Erro ao cancelar agendamento');
+            }
+        } catch (error) {
+            alert('Erro ao processar cancelamento');
+        }
+    });
+});
+</script>
+

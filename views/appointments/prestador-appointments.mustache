@@ -1,0 +1,57 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Agendamentos</h1>
+
+            {{#appointments}}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5 class="card-title">{{service_name}}</h5>
+                                <p class="card-text">
+                                    <strong>Cliente:</strong> {{cliente_name}}<br>
+                                    <strong>Telefone:</strong> {{cliente_phone}}<br>
+                                    <strong>Data/Hora:</strong>
+                                    <span class="badge bg-info">{{appointment_date}}</span><br>
+                                    <strong>Status:</strong>
+                                    {{#isPendente}}
+                                        <span class="badge bg-warning">Pendente</span>
+                                    {{/isPendente}}
+                                    {{#isConfirmado}}
+                                        <span class="badge bg-success">Confirmado</span>
+                                    {{/isConfirmado}}
+                                    {{#isCancelado}}
+                                        <span class="badge bg-danger">Cancelado</span>
+                                    {{/isCancelado}}
+                                    {{#isConcluido}}
+                                        <span class="badge bg-secondary">Concluído</span>
+                                    {{/isConcluido}}
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                {{#isPendente}}
+                                    <button class="btn btn-success btn-sm confirm-appointment" data-id="{{id}}">
+                                        Confirmar
+                                    </button>
+                                {{/isPendente}}
+                                {{#isConfirmado}}
+                                    <button class="btn btn-info btn-sm complete-appointment" data-id="{{id}}">
+                                        Marcar Concluído
+                                    </button>
+                                {{/isConfirmado}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/appointments}}
+
+            {{^appointments}}
+                <div class="alert alert-info">
+                    Você não possui agendamentos.
+                </div>
+            {{/appointments}}
+        </div>
+    </div>
+</div>
+
