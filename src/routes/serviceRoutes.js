@@ -4,13 +4,13 @@ const { body } = require('express-validator');
 const { requireAuth, requirePrestadorType } = require('../middleware/authMiddleware');
 const ServiceController = require('../controllers/serviceController');
 
-router.get('/', ServiceController.getList);
-
-router.get('/:id', ServiceController.getDetail);
-
 router.get('/create', requireAuth, requirePrestadorType, (req, res) => {
   ServiceController.getCreate(req, res);
 });
+
+router.get('/', ServiceController.getList);
+
+router.get('/:id', ServiceController.getDetail);
 
 router.post('/', requireAuth, requirePrestadorType, [
   body('name').trim().notEmpty().withMessage('Nome é obrigatório'),
@@ -21,4 +21,3 @@ router.post('/', requireAuth, requirePrestadorType, [
 ], ServiceController.postCreate);
 
 module.exports = router;
-
