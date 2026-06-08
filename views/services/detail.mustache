@@ -1,0 +1,45 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{service.name}}</h1>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Detalhes do Serviço</h5>
+                    <p><strong>Prestador:</strong> {{service.prestador_name}}</p>
+                    <p><strong>Categoria:</strong> {{service.category_name}}</p>
+                    <p><strong>Telefone:</strong> {{service.prestador_phone}}</p>
+                    <p><strong>Duração:</strong> {{service.duration}} minutos</p>
+                    <h3 class="text-success">R$ {{service.price}}</h3>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Descrição</h5>
+                    <p>{{service.description}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            {{#canBook}}
+                <div class="card sticky-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Agendar Serviço</h5>
+                        <a href="/appointments/new/{{service.id}}" class="btn btn-primary w-100">
+                            Agendar Agora
+                        </a>
+                    </div>
+                </div>
+            {{/canBook}}
+
+            {{^canBook}}
+                <div class="alert alert-info">
+                    <p>Faça <a href="/auth/login">login como cliente</a> para agendar este serviço.</p>
+                </div>
+            {{/canBook}}
+        </div>
+    </div>
+</div>
+
