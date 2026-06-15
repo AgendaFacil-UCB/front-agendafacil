@@ -15,12 +15,15 @@ function criarApp() {
   const app = express();
 
   // Ler layout Mustache uma única vez
-  const caminhoLayout = path.join(__dirname, 'views', 'layout.mustache');
+  const caminhoLayout = path.join(__dirname, 'views', 'layout.html');
   const modeloLayout = fs.readFileSync(caminhoLayout, 'utf8');
 
-  // View engine
+  // View engine: usar extensão .html (os templates foram renomeados para .html)
+  // Registrar ambos .html e .mustache para compatibilidade
+  app.engine('html', mustacheExpress());
   app.engine('mustache', mustacheExpress());
-  app.set('view engine', 'mustache');
+  // Usar .html como extensão padrão de renderização
+  app.set('view engine', 'html');
   app.set('views', path.join(__dirname, 'views'));
 
   // Wrapper de layout: intercepta res.render para envolver com layout
@@ -38,22 +41,50 @@ function criarApp() {
       // Mesclar res.locals
       const opcoesMescladas = Object.assign({}, res.locals, opcoes);
 
-      // Renderizar a view parcial primeiro
+      // Renderizar a view parcial primeiro. Se não for encontrada com a extensão
+      // configurada, tentar extensões alternativas (.html e .mustache) para
+      // compatibilidade com arquivos renomeados.
       renderOriginal(view, opcoesMescladas, (err, htmlParcial) => {
+        function sendWrapped(html) {
+          const dadosLayout = Object.assign({}, opcoesMescladas, { body: html });
+          const htmlCompleto = Mustache.render(modeloLayout, dadosLayout);
+          if (callback) return callback(null, htmlCompleto);
+          return res.send(htmlCompleto);
+        }
+
+        if (err && /Failed to lookup view/.test(String(err.message))) {
+          // tentar alternativas
+          const tries = [];
+          if (!view.endsWith('.html')) tries.push(view + '.html');
+          if (!view.endsWith('.mustache')) tries.push(view + '.mustache');
+
+          let i = 0;
+          const tryNext = () => {
+            if (i >= tries.length) {
+              if (callback) return callback(err);
+              return next(err);
+            }
+            const name = tries[i++];
+            renderOriginal(name, opcoesMescladas, (err2, html2) => {
+              if (!err2) return sendWrapped(html2);
+              if (err2 && /Failed to lookup view/.test(String(err2.message))) {
+                return tryNext();
+              }
+              // erro diferente
+              if (callback) return callback(err2);
+              return next(err2);
+            });
+          };
+          return tryNext();
+        }
+
         if (err) {
           if (callback) return callback(err);
           return next(err);
         }
 
         // Envolver no layout
-        const dadosLayout = Object.assign({}, opcoesMescladas, { body: htmlParcial });
-        const htmlCompleto = Mustache.render(modeloLayout, dadosLayout);
-
-        if (callback) {
-          callback(null, htmlCompleto);
-        } else {
-          res.send(htmlCompleto);
-        }
+        sendWrapped(htmlParcial);
       });
     };
 
