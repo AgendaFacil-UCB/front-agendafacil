@@ -1,0 +1,118 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+          <h2 class="card-title text-center mb-1 fw-bold">Criar Conta</h2>
+          <p class="text-center text-muted small mb-4">Escolha como deseja se cadastrar</p>
+
+          <!-- Nav de tipo de usuário -->
+          <ul class="nav nav-pills nav-fill mb-4 register-type-nav" id="navTipoCadastro">
+            <li class="nav-item">
+              <a class="nav-link active" href="#" id="btnCliente" data-tipo="cliente">
+                👤 Cliente
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="btnPrestador" data-tipo="prestador">
+                🛠️ Prestador
+              </a>
+            </li>
+          </ul>
+
+          <!-- Descrição dinâmica -->
+          <div class="alert alert-info py-2 small text-center mb-3" id="descricaoTipo">
+            <span id="textoDescricaoTipo">Você está se cadastrando como <strong>Cliente</strong> — busque e agende serviços.</span>
+          </div>
+
+          {{#errors}}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <strong>Erro:</strong> {{msg}}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {{/errors}}
+
+          <form method="POST" action="/autenticacao/cadastro">
+            <!-- Campo hidden que guarda o tipo selecionado -->
+            <input type="hidden" id="campoTipo" name="tipo" value="cliente">
+
+            <div class="mb-3">
+              <label for="nome" class="form-label fw-semibold">Nome Completo</label>
+              <input type="text" class="form-control" id="nome" name="nome" placeholder="Seu nome completo" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label fw-semibold">Email</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="seu@email.com" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="senha" class="form-label fw-semibold">Senha</label>
+              <input type="password" class="form-control" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required minlength="6">
+            </div>
+
+            <div class="mb-3 d-none" id="campoCnpj">
+               <label for="cnpj" class="form-label fw-semibold">CNPJ</label>
+               <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="Ex: 00.394.460/0001-41">
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100 py-2 mt-2 fw-semibold" id="botaoEnviar">
+              Cadastrar como Cliente
+            </button>
+          </form>
+
+          <div class="text-center mt-3">
+            <p class="small text-muted">Já tem conta? <a href="/autenticacao/entrar" class="text-decoration-none">Faça login</a></p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const nav         = document.getElementById('navTipoCadastro');
+  const campoTipo   = document.getElementById('campoTipo');
+  const botaoEnviar = document.getElementById('botaoEnviar');
+  const textoDesc   = document.getElementById('textoDescricaoTipo');
+  const campoExtra  = document.getElementById('campoCnpj');
+
+  const configuracoes = {
+    cliente: {
+      label: 'Cadastrar como Cliente',
+      desc:  'Você está se cadastrando como <strong>Cliente</strong> — busque e agende serviços.',
+      extra: false
+    },
+    prestador: {
+      label: 'Cadastrar como Prestador',
+      desc:  'Você está se cadastrando como <strong>Prestador</strong> — ofereça seus serviços.',
+      extra: true
+    }
+  };
+
+  nav.querySelectorAll('.nav-link').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      const tipo = this.dataset.tipo;
+
+      nav.querySelectorAll('.nav-link').forEach(function (l) { l.classList.remove('active'); });
+      this.classList.add('active');
+
+      campoTipo.value = tipo;
+
+      var cfg = configuracoes[tipo];
+      textoDesc.innerHTML    = cfg.desc;
+      botaoEnviar.textContent = cfg.label;
+
+      if (cfg.extra) {
+        campoExtra.classList.remove('d-none');
+      } else {
+        campoExtra.classList.add('d-none');
+      }
+    });
+  });
+})();
+</script>

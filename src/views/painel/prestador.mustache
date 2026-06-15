@@ -1,0 +1,57 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Dashboard do Prestador</h1>
+            <p>Bem-vindo, {{usuario.nome}}!</p>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card text-center mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Serviços Cadastrados</h5>
+                            <h2 class="text-success">{{totalServicos}}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card text-center mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total de Agendamentos</h5>
+                            <h2 class="text-info">{{totalAgendamentos}}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Próximos Agendamentos</h3>
+            {{#proximosAgendamentos}}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{nome_servico}}</h5>
+                        <p class="card-text">
+                            <strong>Cliente:</strong> {{nome_cliente}}<br>
+                            <strong>Data/Hora:</strong> <span class="badge bg-info">{{data_agendamento}}</span>
+                        </p>
+                    </div>
+                </div>
+            {{/proximosAgendamentos}}
+
+            {{^proximosAgendamentos}}
+                <div class="alert alert-info">
+                    Não há agendamentos programados para breve.
+                </div>
+            {{/proximosAgendamentos}}
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Ações Rápidas</h5>
+                    <a href="/servicos/criar" class="btn btn-primary w-100 mb-2">Novo Serviço</a>
+                    <a href="/agendamentos/agendamentos-prestador" class="btn btn-secondary w-100 mb-2">Ver Agendamentos</a>
+                    <a href="/servicos" class="btn btn-outline-primary w-100">Meus Serviços</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

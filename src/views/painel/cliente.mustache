@@ -1,0 +1,47 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Bem-vindo, {{usuario.nome}}!</h1>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card text-center mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Meus Agendamentos</h5>
+                            <h2 class="text-primary">{{totalAgendamentos}}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Próximos Agendamentos</h3>
+            {{#proximosAgendamentos}}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{nome_servico}}</h5>
+                        <p class="card-text">
+                            <strong>Prestador:</strong> {{nome_prestador}}<br>
+                            <strong>Data/Hora:</strong> {{data_agendamento}}
+                        </p>
+                    </div>
+                </div>
+            {{/proximosAgendamentos}}
+
+            {{^proximosAgendamentos}}
+                <div class="alert alert-info">
+                    Você não possui agendamentos próximos.
+                </div>
+            {{/proximosAgendamentos}}
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Ações Rápidas</h5>
+                    <a href="/servicos" class="btn btn-primary w-100 mb-2">Buscar Serviços</a>
+                    <a href="/agendamentos/meus-agendamentos" class="btn btn-secondary w-100">Ver Todos os Agendamentos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

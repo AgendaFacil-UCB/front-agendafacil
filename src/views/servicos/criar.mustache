@@ -1,0 +1,97 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1>Criar Novo Serviço</h1>
+
+            {{#errors}}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{msg}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {{/errors}}
+
+            <form method="POST" action="/servicos">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome do Serviço</label>
+                    <input type="text" class="form-control" id="nome" name="nome" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="categoria_id" class="form-label">Categoria</label>
+                    <select class="form-select" id="categoria_id" name="categoria_id" required>
+                        <option value="">Selecione uma categoria</option>
+                        {{#categorias}}
+                            <option value="{{id}}">{{nome}}</option>
+                        {{/categorias}}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="descricao" class="form-label">Descrição</label>
+                    <textarea class="form-control" id="descricao" name="descricao" rows="4" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="duracao" class="form-label">Duração (minutos)</label>
+                            <input type="number" class="form-control" id="duracao" name="duracao" min="15" step="15" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="preco" class="form-label">Preço (R$)</label>
+                            <input type="number" class="form-control" id="preco" name="preco" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="mt-4">Disponibilidade</h5>
+
+                <div class="mb-3">
+                    <label class="form-label">Dias de Funcionamento</label>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="dias" value="1">
+                        <label class="form-check-label">Segunda</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="dias" value="2">
+                        <label class="form-check-label">Terça</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="dias" value="3">
+                        <label class="form-check-label">Quarta</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="dias" value="4">
+                        <label class="form-check-label">Quinta</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="dias" value="5">
+                        <label class="form-check-label">Sexta</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Início</label>
+                        <input type="time" class="form-control" name="hora_inicio">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Fim</label>
+                        <input type="time" class="form-control" name="hora_fim">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Criar Serviço</button>
+                <a href="/servicos" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>

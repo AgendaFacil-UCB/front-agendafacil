@@ -1,0 +1,161 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{servico.nome}}</h1>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Detalhes do Serviço</h5>
+                    <p><strong>Prestador:</strong> {{servico.prestador.nome}}</p>
+                    <p><strong>Categoria:</strong> {{servico.categoria.nome}}</p>
+                    <p><strong>Telefone:</strong> {{servico.prestador.telefone}}</p>
+                    <p><strong>Duração:</strong> {{servico.duracao}} minutos</p>
+                    <h3 class="text-success">R$ {{servico.preco}}</h3>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Descrição</h5>
+                    <p>{{servico.descricao}}</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Horário de Funcionamento</h5>
+                    {{#diasFuncionamento}}
+                        <p class="mb-1"><strong>{{nome}}:</strong> {{horaInicio}} às {{horaFim}}</p>
+                    {{/diasFuncionamento}}
+                    {{^diasFuncionamento}}
+                        <p class="text-muted">Nenhum horário de funcionamento cadastrado.</p>
+                    {{/diasFuncionamento}}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            {{#podeAgendar}}
+                <div class="card sticky-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Agendar Serviço</h5>
+
+                        <div class="mb-3">
+                            <label for="dataAgendamento" class="form-label">Escolha o dia</label>
+                            <input type="date" class="form-control" id="dataAgendamento">
+                        </div>
+
+                        <div id="listaHorarios"></div>
+
+                        <div id="mensagemHorarios" class="text-muted small mt-2"></div>
+                        <div id="mensagemSucesso" class="alert alert-success mt-3" style="display:none;"></div>
+                        <div id="mensagemErro" class="alert alert-danger mt-3" style="display:none;"></div>
+                    </div>
+                </div>
+            {{/podeAgendar}}
+
+            {{^podeAgendar}}
+                <div class="alert alert-info">
+                    <p>Faça <a href="/autenticacao/entrar">login como cliente</a> para agendar este serviço.</p>
+                </div>
+            {{/podeAgendar}}
+        </div>
+    </div>
+</div>
+
+{{#podeAgendar}}
+<script>
+(function () {
+  const servicoId = {{servico.id}};
+  const inputData = document.getElementById('dataAgendamento');
+  const listaHorarios = document.getElementById('listaHorarios');
+  const mensagemHorarios = document.getElementById('mensagemHorarios');
+  const mensagemSucesso = document.getElementById('mensagemSucesso');
+  const mensagemErro = document.getElementById('mensagemErro');
+
+  // Definir data mínima como hoje
+  const hoje = new Date();
+  inputData.min = hoje.toISOString().slice(0, 10);
+
+  inputData.addEventListener('change', carregarHorarios);
+
+  async function carregarHorarios() {
+    listaHorarios.innerHTML = '';
+    mensagemErro.style.display = 'none';
+    mensagemSucesso.style.display = 'none';
+
+    const data = inputData.value;
+    if (!data) return;
+
+    mensagemHorarios.textContent = 'Carregando horários...';
+
+    try {
+      const response = await fetch(`/agendamentos/horarios/${servicoId}?data=${data}`);
+      const dados = await response.json();
+
+      if (!response.ok) {
+        mensagemHorarios.textContent = '';
+        mensagemErro.textContent = dados.error || 'Erro ao buscar horários';
+        mensagemErro.style.display = 'block';
+        return;
+      }
+
+      if (!dados.horarios || dados.horarios.length === 0) {
+        mensagemHorarios.textContent = 'Nenhum horário disponível para este dia.';
+        return;
+      }
+
+      mensagemHorarios.textContent = 'Horários disponíveis:';
+
+      dados.horarios.forEach(horario => {
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'btn btn-outline-primary btn-sm me-2 mb-2';
+        botao.textContent = `${horario.inicio} - ${horario.fim}`;
+        botao.addEventListener('click', () => agendar(data, horario.inicio));
+        listaHorarios.appendChild(botao);
+      });
+    } catch (error) {
+      mensagemHorarios.textContent = '';
+      mensagemErro.textContent = 'Erro ao buscar horários disponíveis';
+      mensagemErro.style.display = 'block';
+    }
+  }
+
+  async function agendar(data, horaInicio) {
+    mensagemErro.style.display = 'none';
+    mensagemSucesso.style.display = 'none';
+
+    try {
+      const response = await fetch('/agendamentos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          servico_id: servicoId,
+          data: data,
+          hora_inicio: horaInicio
+        })
+      });
+
+      const dados = await response.json();
+
+      if (response.ok) {
+        mensagemSucesso.textContent = dados.message || 'Agendamento realizado com sucesso!';
+        mensagemSucesso.style.display = 'block';
+        setTimeout(() => {
+          window.location.href = '/agendamentos/meus-agendamentos';
+        }, 1500);
+      } else {
+        mensagemErro.textContent = dados.error || (dados.errors && dados.errors[0].msg) || 'Erro ao agendar';
+        mensagemErro.style.display = 'block';
+        // Recarregar horários, pois o escolhido pode ter ficado indisponível
+        carregarHorarios();
+      }
+    } catch (error) {
+      mensagemErro.textContent = 'Erro ao processar agendamento';
+      mensagemErro.style.display = 'block';
+    }
+  }
+})();
+</script>
+{{/podeAgendar}}

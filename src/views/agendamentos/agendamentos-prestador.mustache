@@ -1,0 +1,108 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Agendamentos</h1>
+
+            {{#agendamentos}}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5 class="card-title">{{nome_servico}}</h5>
+                                <p class="card-text">
+                                    <strong>Cliente:</strong> {{nome_cliente}}<br>
+                                    <strong>Telefone:</strong> {{telefone_cliente}}<br>
+                                    <strong>Data/Hora:</strong>
+                                    <span class="badge bg-info">{{data_agendamento}}</span><br>
+                                    <strong>Status:</strong>
+                                    {{#ehPendente}}
+                                        <span class="badge bg-warning">Pendente</span>
+                                    {{/ehPendente}}
+                                    {{#ehConfirmado}}
+                                        <span class="badge bg-success">Confirmado</span>
+                                    {{/ehConfirmado}}
+                                    {{#ehCancelado}}
+                                        <span class="badge bg-danger">Cancelado</span>
+                                    {{/ehCancelado}}
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                {{#ehPendente}}
+                                    <button class="btn btn-success btn-sm confirmar-agendamento" data-id="{{id}}">
+                                        Confirmar
+                                    </button>
+                                    <button class="btn btn-danger btn-sm cancelar-agendamento" data-id="{{id}}">
+                                        Cancelar
+                                    </button>
+                                {{/ehPendente}}
+                                {{#ehConfirmado}}
+                                    <button class="btn btn-danger btn-sm cancelar-agendamento" data-id="{{id}}">
+                                        Cancelar
+                                    </button>
+                                {{/ehConfirmado}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/agendamentos}}
+
+            {{^agendamentos}}
+                <div class="alert alert-info">
+                    Você não possui agendamentos.
+                </div>
+            {{/agendamentos}}
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.confirmar-agendamento').forEach(button => {
+    button.addEventListener('click', async function() {
+        const idAgendamento = this.getAttribute('data-id');
+
+        try {
+            const response = await fetch(`/agendamentos/${idAgendamento}/confirmar`, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.error || 'Erro ao confirmar agendamento');
+            }
+        } catch (error) {
+            alert('Erro ao processar confirmação');
+        }
+    });
+});
+
+document.querySelectorAll('.cancelar-agendamento').forEach(button => {
+    button.addEventListener('click', async function() {
+        if (!confirm('Deseja realmente cancelar este agendamento?')) return;
+
+        const idAgendamento = this.getAttribute('data-id');
+
+        try {
+            const response = await fetch(`/agendamentos/${idAgendamento}/cancelar`, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.error || 'Erro ao cancelar agendamento');
+            }
+        } catch (error) {
+            alert('Erro ao processar cancelamento');
+        }
+    });
+});
+</script>
