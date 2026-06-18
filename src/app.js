@@ -111,7 +111,13 @@ function criarApp() {
   });
 
   app.use((req, res) => {
-    res.status(404).render('404', { title: 'Página não encontrada' });
+    res.status(404).render('erro', {
+      title: 'Página não encontrada',
+      status: '404',
+      mensagem: 'A página que você está procurando não existe.',
+      eh404: true,
+      nao404: false
+    });
   });
 
   app.use(tratadorDeErros);

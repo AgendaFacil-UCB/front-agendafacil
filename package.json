@@ -2,10 +2,10 @@
   "name": "agendafacil",
   "version": "1.0.0",
   "description": "Sistema de agendamento para prestadores de serviço",
-  "main": "src/indice.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node src/indice.js",
-    "dev": "nodemon src/indice.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "keywords": [
     "agendamento",

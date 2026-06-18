@@ -8,11 +8,17 @@ function tratadorDeErros(err, req, res, next) { // eslint-disable-line no-unused
     return res.status(status).json({ erro: mensagem });
   }
 
-  res.status(status).render('erro', { title: 'Erro', mensagem, status }, (erroRender, html) => {
+  res.status(status).render('erro', {
+    title: 'Erro',
+    mensagem,
+    status,
+    eh404: status === 404,
+    nao404: status !== 404
+  }, (erroRender, html) => {
     if (erroRender) {
       return res.status(status).send(`
         <!DOCTYPE html><html><body>
-        <h1>${status} - Erro</h1><p>${mensagem}</p>
+        <h1>${status} - Erro</h1><p>${mensagem}
         <a href="/">Voltar ao início</a>
         </body></html>
       `);
