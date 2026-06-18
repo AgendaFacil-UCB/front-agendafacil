@@ -35,7 +35,6 @@ function showNotification(message, type = 'success') {
   const mainContainer = document.querySelector('main');
   mainContainer.insertBefore(alertDiv, mainContainer.firstChild);
 
-  // Auto-remover após 5 segundos
   setTimeout(() => {
     alertDiv.remove();
   }, 5000);
