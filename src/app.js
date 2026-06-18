@@ -18,15 +18,10 @@ function criarApp() {
   const caminhoLayout = path.join(__dirname, 'views', 'layout.html');
   const modeloLayout = fs.readFileSync(caminhoLayout, 'utf8');
 
-  // View engine: usar extensão .html (os templates foram renomeados para .html)
-  // Registrar ambos .html e .mustache para compatibilidade
   app.engine('html', mustacheExpress());
-  app.engine('mustache', mustacheExpress());
-  // Usar .html como extensão padrão de renderização
   app.set('view engine', 'html');
   app.set('views', path.join(__dirname, 'views'));
 
-  // Wrapper de layout: intercepta res.render para envolver com layout
   app.use((req, res, next) => {
     const renderOriginal = res.render.bind(res);
 
@@ -48,7 +43,6 @@ function criarApp() {
         }
 
         if (err && /Failed to lookup view/.test(String(err.message))) {
-          // tentar alternativas
           const tries = [];
           if (!view.endsWith('.html')) tries.push(view + '.html');
           if (!view.endsWith('.mustache')) tries.push(view + '.mustache');

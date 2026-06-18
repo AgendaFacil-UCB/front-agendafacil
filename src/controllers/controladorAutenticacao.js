@@ -2,7 +2,6 @@ const { validationResult } = require('express-validator');
 const ServicoAutenticacao = require('../services/servicoAutenticacao');
 
 const getCadastro = (req, res) => {
-  // Permite que o tipo inicial seja controlado por query string (?tipo=prestador)
   const tipoQuery = (req.query && req.query.tipo) || '';
   const tipo = ['cliente', 'prestador'].includes(tipoQuery) ? tipoQuery : 'cliente';
 
@@ -37,7 +36,6 @@ const postCadastro = async (req, res, next) => {
 
   console.log(req.body);
   if (!erros.isEmpty()) {
-    // Preserva o tipo selecionado para re-renderizar corretamente
     const tipoBody = (req.body && req.body.tipo) || 'cliente';
     const cfg = tipoBody === 'prestador' ? {
       botaoLabel: 'Cadastrar como Prestador',

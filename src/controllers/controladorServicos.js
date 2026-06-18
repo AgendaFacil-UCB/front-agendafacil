@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const Servico = require('../models/servico');
 const ServicoDisponibilidades = require('../models/servico_disponibilidades');
+const ServicoAgendamentos = require('../services/servicoAgendamentos');
 const Categoria = require('../models/categoria');
 const Usuario = require('../models/usuario');
 
@@ -49,11 +50,31 @@ const getDetalhe = async (req, res) => {
       horaFim: d.horaFim
     }));
 
+    // Se houver ?data=YYYY-MM-DD, calcular horários disponíveis e repassar para a view
+    const selectedData = req.query.data || '';
+    let horarios = [];
+    if (selectedData) {
+      try {
+        horarios = await ServicoAgendamentos.getHorariosDisponiveis(servico.id, selectedData);
+      } catch (err) {
+        // Em caso de erro ao buscar horários (data inválida, serviço não encontrado),
+        // simplesmente não retornamos horários e deixamos a view exibir mensagem apropriada.
+        horarios = [];
+      }
+    }
+
+    // Data mínima para o input date (hoje)
+    const hoje = new Date();
+    const minDate = hoje.toISOString().slice(0, 10);
+
     res.render('servicos/detalhe', {
       title: servico.nome,
       servico: servico,
       diasFuncionamento,
-      podeAgendar: req.session.usuario && req.session.usuario.tipo === 'cliente'
+      podeAgendar: req.session.usuario && req.session.usuario.tipo === 'cliente',
+      horarios,
+      selectedData,
+      minDate
     });
   } catch (err) {
     return res.status(500).send('Erro ao buscar serviço');

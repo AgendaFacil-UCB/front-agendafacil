@@ -30,14 +30,14 @@
                             </div>
                             <div class="col-md-4 text-end">
                                 {{#ehPendente}}
-                                    <button class="btn btn-danger btn-sm cancelar-agendamento" data-id="{{id}}">
-                                        Cancelar
-                                    </button>
+                                    <form method="POST" action="/agendamentos/{{id}}/cancelar" class="d-inline" onsubmit="return confirm('Deseja realmente cancelar este agendamento?')">
+                                        <button class="btn btn-danger btn-sm" type="submit">Cancelar</button>
+                                    </form>
                                 {{/ehPendente}}
                                 {{#ehConfirmado}}
-                                    <button class="btn btn-danger btn-sm cancelar-agendamento" data-id="{{id}}">
-                                        Cancelar
-                                    </button>
+                                    <form method="POST" action="/agendamentos/{{id}}/cancelar" class="d-inline" onsubmit="return confirm('Deseja realmente cancelar este agendamento?')">
+                                        <button class="btn btn-danger btn-sm" type="submit">Cancelar</button>
+                                    </form>
                                 {{/ehConfirmado}}
                             </div>
                         </div>
@@ -54,30 +54,4 @@
     </div>
 </div>
 
-<script>
-document.querySelectorAll('.cancelar-agendamento').forEach(button => {
-    button.addEventListener('click', async function() {
-        if (!confirm('Deseja realmente cancelar este agendamento?')) return;
-
-        const idAgendamento = this.getAttribute('data-id');
-
-        try {
-            const response = await fetch(`/agendamentos/${idAgendamento}/cancelar`, {
-                method: 'POST',
-                headers: { 'Accept': 'application/json' }
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert(data.message);
-                location.reload();
-            } else {
-                alert(data.error || 'Erro ao cancelar agendamento');
-            }
-        } catch (error) {
-            alert('Erro ao processar cancelamento');
-        }
-    });
-});
-</script>
+<!-- Cancelamento agora é feito via formulários POST simples; o controlador lida com a lógica. -->

@@ -1,16 +1,12 @@
-// Adicionar helper para comparação de igualdade no Mustache
 Mustache.tags = ['{{', '}}'];
 
-// Função auxiliar para Mustache (caso necessário)
 window.ifEqual = function(a, b) {
   return a === b;
 };
 
-// Inicialização geral
 document.addEventListener('DOMContentLoaded', function() {
   console.log('AgendaFácil carregado');
 
-  // Validação de formulários
   const forms = document.querySelectorAll('form');
   forms.forEach(form => {
     form.addEventListener('submit', function(e) {
@@ -23,13 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// Função para formatação de data/hora
 function formatDateTime(dateTime) {
   const date = new Date(dateTime);
   return date.toLocaleString('pt-BR');
 }
 
-// Função para mostrar notificações
 function showNotification(message, type = 'success') {
   const alertDiv = document.createElement('div');
   alertDiv.className = `alert alert-${type} alert-dismissible fade show`;

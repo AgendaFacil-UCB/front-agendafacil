@@ -1,7 +1,6 @@
 const { validationResult } = require('express-validator');
 const ServicoAgendamentos = require('../services/servicoAgendamentos');
 
-// Retorna os horários disponíveis para um serviço em uma data (usado via AJAX)
 const getHorarios = async (req, res, next) => {
   try {
     const { servicoId } = req.params;
@@ -24,7 +23,11 @@ const getHorarios = async (req, res, next) => {
 const postCriar = async (req, res, next) => {
   const erros = validationResult(req);
   if (!erros.isEmpty()) {
-    return res.status(400).json({ errors: erros.array() });
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+      return res.status(400).json({ errors: erros.array() });
+    }
+
+    return res.redirect('back');
   }
 
   try {
@@ -35,11 +38,19 @@ const postCriar = async (req, res, next) => {
       horaInicio: hora_inicio,
       clienteId: req.session.usuario.id,
     });
-    // Retorna JSON para o fetch do frontend tratar e redirecionar
-    return res.status(201).json({ message: 'Agendamento realizado com sucesso!', agendamento });
+
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+      return res.status(201).json({ message: 'Agendamento realizado com sucesso!', agendamento });
+    }
+
+    return res.redirect('/agendamentos/meus-agendamentos');
   } catch (err) {
     if (['SERVICO_NAO_ENCONTRADO', 'CONFLITO', 'DATA_INVALIDA'].includes(err.code)) {
-      return res.status(400).json({ error: err.message });
+      if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(400).json({ error: err.message });
+      }
+
+      return res.redirect('back');
     }
     next(err);
   }
@@ -87,7 +98,6 @@ const postConfirmar = async (req, res, next) => {
 const postCancelar = async (req, res, next) => {
   try {
     await ServicoAgendamentos.cancelar(req.params.id, req.session.usuario.id);
-    // Verifica se é chamada AJAX ou form normal
     if (req.xhr || req.headers.accept?.includes('application/json')) {
       return res.json({ message: 'Agendamento cancelado com sucesso!' });
     }

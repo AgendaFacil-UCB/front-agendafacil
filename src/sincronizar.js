@@ -4,7 +4,6 @@ const Categoria = require('./models/categoria');
 const Servico = require('./models/servico');
 const Agendamento = require('./models/agendamento');
 
-// Definir relacionamentos
 Servico.belongsTo(Usuario, { foreignKey: 'prestadorId', as: 'prestador' });
 Servico.belongsTo(Categoria, { foreignKey: 'categoriaId', as: 'categoria' });
 
@@ -18,13 +17,11 @@ Usuario.hasMany(Agendamento, { foreignKey: 'prestadorId', as: 'agendamentosComoP
 
 Categoria.hasMany(Servico, { foreignKey: 'categoriaId', as: 'servicos' });
 
-// Sincronizar banco de dados
 const sincronizarBancoDados = async () => {
   try {
     await db.sync();
     console.log('Banco de dados sincronizado com sucesso');
 
-    // Inserir categorias padrão
     const categorias = [
       { nome: 'Barbearia', descricao: 'Serviços de barbearia' },
       { nome: 'Manicure', descricao: 'Serviços de unhas' },

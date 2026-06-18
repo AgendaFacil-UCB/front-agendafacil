@@ -9,7 +9,6 @@ const processarAgendamentos = (agendamentos) =>
     const json = agendamento.toJSON ? agendamento.toJSON() : agendamento;
     return {
       ...json,
-      // Formatar data para exibição
       data_agendamento: json.inicioAgendamento
         ? new Date(json.inicioAgendamento).toLocaleString('pt-BR', {
             day: '2-digit', month: '2-digit', year: 'numeric',
@@ -21,33 +20,29 @@ const processarAgendamentos = (agendamentos) =>
             hour: '2-digit', minute: '2-digit'
           })
         : '',
-      // Campos para as views (Mustache não acessa relações aninhadas diretamente)
+
       nome_servico: json.servico ? json.servico.nome : '',
       nome_prestador: json.prestador ? json.prestador.nome : '',
       telefone_prestador: json.prestador ? json.prestador.telefone : '',
       nome_cliente: json.cliente ? json.cliente.nome : '',
       telefone_cliente: json.cliente ? json.cliente.telefone : '',
-      // Status booleanos
       ehPendente: json.status === 'pendente',
       ehConfirmado: json.status === 'confirmado',
       ehCancelado: json.status === 'cancelado',
     };
   });
 
-// Converte 'HH:MM' em minutos desde a meia-noite
 const horaParaMinutos = (hora) => {
   const [h, m] = hora.split(':').map(Number);
   return h * 60 + m;
 };
 
-// Converte minutos desde a meia-noite em 'HH:MM'
 const minutosParaHora = (minutos) => {
   const h = Math.floor(minutos / 60);
   const m = minutos % 60;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 };
 
-// Retorna os horários disponíveis para um serviço em uma data específica (YYYY-MM-DD)
 const getHorariosDisponiveis = async (servicoId, dataStr) => {
   const servico = await Servico.findByPk(servicoId);
   if (!servico) {
@@ -56,8 +51,6 @@ const getHorariosDisponiveis = async (servicoId, dataStr) => {
     throw err;
   }
 
-  // new Date('YYYY-MM-DD') é interpretado como UTC; usamos meio-dia para evitar
-  // problemas de fuso horário ao calcular o dia da semana
   const data = new Date(`${dataStr}T12:00:00`);
   if (isNaN(data.getTime())) {
     const err = new Error('Data inválida');
@@ -65,7 +58,7 @@ const getHorariosDisponiveis = async (servicoId, dataStr) => {
     throw err;
   }
 
-  const diaDaSemana = data.getDay(); // 0 = domingo, 1 = segunda, ... 6 = sábado
+  const diaDaSemana = data.getDay();
 
   const disponibilidades = await ServicoDisponibilidades.findAll({
     where: { servicoId, diaDaSemana }
@@ -75,7 +68,6 @@ const getHorariosDisponiveis = async (servicoId, dataStr) => {
     return [];
   }
 
-  // Início e fim do dia (em UTC, baseado na data informada) para buscar agendamentos existentes
   const inicioDia = new Date(`${dataStr}T00:00:00`);
   const fimDia = new Date(`${dataStr}T23:59:59`);
 
@@ -132,7 +124,6 @@ const criar = async ({ servicoId, data, horaInicio, clienteId }) => {
   }
   const dataFim = new Date(dataInicio.getTime() + servico.duracao * 60 * 1000);
 
-  // Verificar se o horário ainda está disponível
   const horariosDisponiveis = await getHorariosDisponiveis(servicoId, data);
   const horarioValido = horariosDisponiveis.some(h => h.inicio === horaInicio);
 
