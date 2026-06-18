@@ -31,19 +31,14 @@ function criarApp() {
     const renderOriginal = res.render.bind(res);
 
     res.render = function (view, opcoes, callback) {
-      // Normalizar argumentos
       if (typeof opcoes === 'function') {
         callback = opcoes;
         opcoes = {};
       }
       opcoes = opcoes || {};
 
-      // Mesclar res.locals
       const opcoesMescladas = Object.assign({}, res.locals, opcoes);
 
-      // Renderizar a view parcial primeiro. Se não for encontrada com a extensão
-      // configurada, tentar extensões alternativas (.html e .mustache) para
-      // compatibilidade com arquivos renomeados.
       renderOriginal(view, opcoesMescladas, (err, htmlParcial) => {
         function sendWrapped(html) {
           const dadosLayout = Object.assign({}, opcoesMescladas, { body: html });
@@ -70,7 +65,6 @@ function criarApp() {
               if (err2 && /Failed to lookup view/.test(String(err2.message))) {
                 return tryNext();
               }
-              // erro diferente
               if (callback) return callback(err2);
               return next(err2);
             });
@@ -82,8 +76,6 @@ function criarApp() {
           if (callback) return callback(err);
           return next(err);
         }
-
-        // Envolver no layout
         sendWrapped(htmlParcial);
       });
     };
@@ -91,12 +83,10 @@ function criarApp() {
     next();
   });
 
-  // Middlewares globais
   app.use(express.static(path.join(__dirname, '../public')));
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
 
-  // Sessão
   app.use(session({
     secret: process.env.SESSION_SECRET || 'troque-esta-chave-em-producao',
     resave: false,
@@ -108,7 +98,6 @@ function criarApp() {
     },
   }));
 
-  // Expor dados de sessão para as views
   app.use((req, res, next) => {
     res.locals.usuario = req.session.usuario || null;
     if (req.session.usuario) {
@@ -118,7 +107,6 @@ function criarApp() {
     next();
   });
 
-  // Rotas
   app.use('/autenticacao', rotasAutenticacao);
   app.use('/servicos', rotasServicos);
   app.use('/agendamentos', rotasAgendamentos);
@@ -128,12 +116,10 @@ function criarApp() {
     res.render('index', { title: 'AgendaFácil - Sistema de Agendamento' });
   });
 
-  // 404
   app.use((req, res) => {
     res.status(404).render('404', { title: 'Página não encontrada' });
   });
 
-  // Tratamento centralizado de erros
   app.use(tratadorDeErros);
 
   return app;

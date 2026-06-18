@@ -1,35 +1,54 @@
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Bem-vindo ao AgendaFácil!</h1>
-            <p class="lead">Sistema inteligente de agendamento de serviços</p>
-
-            <div class="row mt-5">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Sou Cliente</h5>
-                            <p class="card-text">Procurando serviços como barbearia, manicure ou outros?</p>
-                            <a href="/autenticacao/cadastro?tipo=cliente" class="btn btn-primary">Cadastrar como Cliente</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Sou Prestador</h5>
-                            <p class="card-text">Oferece serviços e quer gerenciar agendamentos?</p>
-                            <a href="/autenticacao/cadastro?tipo=prestador" class="btn btn-success">Cadastrar como Prestador</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-5">
-                <h3>Serviços em Destaque</h3>
-                <a href="/servicos" class="btn btn-outline-primary">Ver Todos os Serviços</a>
-            </div>
-        </div>
+<section class="af-hero">
+  <div class="container text-center">
+    <span class="eyebrow"><span class="dot"></span> Novo • Agendamento online em segundos</span>
+    <h1>Agende serviços <span class="grad">sem complicação</span>.</h1>
+    <p class="lead">Conecte-se aos melhores prestadores da sua região e gerencie todos os seus agendamentos em um único lugar.</p>
+    <div class="af-cta-row">
+      <a href="/servicos" class="btn btn-primary btn-lg">Explorar serviços</a>
+      <a href="/autenticacao/cadastro" class="btn btn-outline-secondary btn-lg">Criar conta grátis</a>
     </div>
-</div>
 
+    <div class="row g-4 mt-2 text-start">
+      <div class="col-md-6">
+        <div class="af-role-card client">
+          <div class="role-icon">🙋</div>
+          <h3>Sou Cliente</h3>
+          <p>Encontre, compare e agende serviços de profissionais qualificados. Confirme em poucos cliques.</p>
+          <a href="/autenticacao/cadastro?tipo=cliente" class="btn btn-primary">Quero agendar</a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="af-role-card pro">
+          <div class="role-icon">🛠️</div>
+          <h3>Sou Prestador</h3>
+          <p>Cadastre seus serviços, defina seus horários e receba agendamentos direto na sua agenda.</p>
+          <a href="/autenticacao/cadastro?tipo=prestador" class="btn btn-success">Quero atender</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="af-section-title">
+    <span class="eyebrow">Por que AgendaFácil</span>
+    <h2>Feito para acabar com a fricção do agendamento</h2>
+  </div>
+  <div class="af-feature-grid">
+    <div class="af-feature">
+      <div class="ficon">⚡</div>
+      <h4>Confirmação instantânea</h4>
+      <p>Veja horários disponíveis em tempo real e confirme sem trocar mensagens.</p>
+    </div>
+    <div class="af-feature">
+      <div class="ficon">📆</div>
+      <h4>Horários inteligentes</h4>
+      <p>Cada prestador define sua disponibilidade. Você só vê o que pode reservar.</p>
+    </div>
+    <div class="af-feature">
+      <div class="ficon">🔒</div>
+      <h4>Dados protegidos</h4>
+      <p>Autenticação segura e privacidade dos seus dados em todas as etapas.</p>
+    </div>
+  </div>
+</section>
