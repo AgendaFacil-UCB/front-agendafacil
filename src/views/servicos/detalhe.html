@@ -1,79 +1,103 @@
-<div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <h1>{{servico.nome}}</h1>
+<!-- src/views/servicos/detalhe.html -->
+<div class="af-page">
+  <div style="margin-bottom:20px;">
+    <a href="/servicos" style="font-size:13px;color:#6b7ab5;display:inline-flex;align-items:center;gap:5px;">
+      <i class="ti ti-arrow-left"></i> Voltar aos serviços
+    </a>
+  </div>
 
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Detalhes do Serviço</h5>
-                    <p><strong>Prestador:</strong> {{servico.prestador.nome}}</p>
-                    <p><strong>Categoria:</strong> {{servico.categoria.nome}}</p>
-                    <p><strong>Telefone:</strong> {{servico.prestador.telefone}}</p>
-                    <p><strong>Duração:</strong> {{servico.duracao}} minutos</p>
-                    <h3 class="text-success">R$ {{servico.preco}}</h3>
-                </div>
-            </div>
-
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Descrição</h5>
-                    <p>{{servico.descricao}}</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Horário de Funcionamento</h5>
-                    {{#diasFuncionamento}}
-                        <p class="mb-1"><strong>{{nome}}:</strong> {{horaInicio}} às {{horaFim}}</p>
-                    {{/diasFuncionamento}}
-                    {{^diasFuncionamento}}
-                        <p class="text-muted">Nenhum horário de funcionamento cadastrado.</p>
-                    {{/diasFuncionamento}}
-                </div>
-            </div>
+  <div class="af-detalhe-grid">
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="af-card">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div class="af-list-icon i0" style="width:52px;height:52px;border-radius:16px;font-size:22px;">
+            <i class="ti ti-briefcase" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h1 style="font-size:20px;margin-bottom:4px;">{{servico.nome}}</h1>
+            <span class="af-badge af-badge-light">{{servico.categoria.nome}}</span>
+          </div>
         </div>
 
-        <div class="col-md-4">
-            {{#podeAgendar}}
-                <div class="card sticky-top">
-                    <div class="card-body">
-                        <h5 class="card-title">Agendar Serviço</h5>
-
-                        <form method="GET" action="/servicos/{{servico.id}}">
-                          <div class="mb-3">
-                              <label for="dataAgendamento" class="form-label">Escolha o dia</label>
-                              <input type="date" class="form-control" id="dataAgendamento" name="data" value="{{selectedData}}" min="{{minDate}}" onchange="this.form.submit()">
-                          </div>
-                        </form>
-
-                        <div id="listaHorarios">
-                          {{#horarios}}
-                            <form method="POST" action="/agendamentos" style="display:inline-block; margin-right:8px; margin-bottom:8px;">
-                              <input type="hidden" name="servico_id" value="{{servico.id}}">
-                              <input type="hidden" name="data" value="{{selectedData}}">
-                              <input type="hidden" name="hora_inicio" value="{{inicio}}">
-                              <button type="submit" class="btn btn-outline-primary btn-sm">{{inicio}} - {{fim}}</button>
-                            </form>
-                          {{/horarios}}
-                          {{^horarios}}
-                            {{#selectedData}}
-                              <div class="text-muted">Nenhum horário disponível para este dia.</div>
-                            {{/selectedData}}
-                          {{/horarios}}
-                        </div>
-                    </div>
-                </div>
-            {{/podeAgendar}}
-
-            {{^podeAgendar}}
-                <div class="alert alert-info">
-                    <p>Faça <a href="/autenticacao/entrar">login como cliente</a> para agendar este serviço.</p>
-                </div>
-            {{/podeAgendar}}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+          <div style="background:rgba(30,45,120,.06);border-radius:12px;padding:14px;">
+            <p style="font-size:11px;color:#6b7ab5;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Prestador</p>
+            <p style="font-size:14px;font-weight:600;color:#0f172a;">{{servico.prestador.nome}}</p>
+          </div>
+          <div style="background:rgba(30,45,120,.06);border-radius:12px;padding:14px;">
+            <p style="font-size:11px;color:#6b7ab5;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Duração</p>
+            <p style="font-size:14px;font-weight:600;color:#0f172a;">{{servico.duracao}} minutos</p>
+          </div>
+          <div style="background:rgba(30,45,120,.06);border-radius:12px;padding:14px;">
+            <p style="font-size:11px;color:#6b7ab5;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Telefone</p>
+            <p style="font-size:14px;font-weight:600;color:#0f172a;">{{servico.prestador.telefone}}</p>
+          </div>
+          <div style="background:linear-gradient(135deg,rgba(30,45,120,.1),rgba(79,124,232,.1));border-radius:12px;padding:14px;">
+            <p style="font-size:11px;color:#6b7ab5;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Preço</p>
+            <p style="font-size:20px;font-weight:700;color:#1e2d78;">R$ {{servico.preco}}</p>
+          </div>
         </div>
+
+        <h3 style="font-size:14px;margin-bottom:8px;">Descrição</h3>
+        <p style="font-size:14px;color:#475569;line-height:1.65;">{{servico.descricao}}</p>
+      </div>
+
+      <div class="af-card">
+        <h3 style="font-size:14px;margin-bottom:14px;">Horário de funcionamento</h3>
+        {{#diasFuncionamento}}
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(99,130,255,.08);">
+            <span style="font-size:13px;font-weight:600;color:#0f172a;">{{nome}}</span>
+            <span class="af-badge af-badge-light">{{horaInicio}} — {{horaFim}}</span>
+          </div>
+        {{/diasFuncionamento}}
+        {{^diasFuncionamento}}
+          <div class="af-empty" style="padding:24px;">
+            <i class="ti ti-clock-off" aria-hidden="true"></i>
+            <p>Nenhum horário cadastrado.</p>
+          </div>
+        {{/diasFuncionamento}}
+      </div>
     </div>
-</div>
 
-{{#podeAgendar}}
-{{/podeAgendar}}
+    <div>
+      {{#podeAgendar}}
+        <div class="af-card" style="position:sticky;top:80px;">
+          <h3 style="font-size:15px;margin-bottom:16px;"><i class="ti ti-calendar-plus" style="color:#4f7ce8;"></i> Agendar serviço</h3>
+          <form method="GET" action="/servicos/{{servico.id}}">
+            <div class="af-fg">
+              <label for="dataAgendamento">Escolha o dia</label>
+              <input type="date" id="dataAgendamento" name="data" value="{{selectedData}}" min="{{minDate}}" onchange="this.form.submit()">
+            </div>
+          </form>
+          <div style="margin-top:8px;">
+            {{#horarios}}
+              <form method="POST" action="/agendamentos" style="display:inline-block;">
+                <input type="hidden" name="servico_id" value="{{servico.id}}">
+                <input type="hidden" name="data" value="{{selectedData}}">
+                <input type="hidden" name="hora_inicio" value="{{inicio}}">
+                <button type="submit" class="af-horario-btn">
+                  <i class="ti ti-clock" style="font-size:13px;"></i> {{inicio}} – {{fim}}
+                </button>
+              </form>
+            {{/horarios}}
+            {{^horarios}}
+              {{#selectedData}}
+                <div class="af-alert af-alert-info" style="font-size:12px;">
+                  <i class="ti ti-info-circle"></i> Nenhum horário disponível para este dia.
+                </div>
+              {{/selectedData}}
+            {{/horarios}}
+          </div>
+        </div>
+      {{/podeAgendar}}
+      {{^podeAgendar}}
+        <div class="af-card">
+          <div class="af-empty">
+            <i class="ti ti-lock" aria-hidden="true"></i>
+            <p>Faça <a href="/autenticacao/entrar" style="color:#4f7ce8;font-weight:600;">login como cliente</a> para agendar este serviço.</p>
+          </div>
+        </div>
+      {{/podeAgendar}}
+    </div>
+  </div>
+</div>

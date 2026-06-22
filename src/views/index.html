@@ -1,54 +1,94 @@
+<!-- src/views/index.html -->
 <section class="af-hero">
-  <div class="container text-center">
-    <span class="eyebrow"><span class="dot"></span> Novo • Agendamento online em segundos</span>
-    <h1>Agende serviços <span class="grad">sem complicação</span>.</h1>
-    <p class="lead">Conecte-se aos melhores prestadores da sua região e gerencie todos os seus agendamentos em um único lugar.</p>
-    <div class="af-cta-row">
-      <a href="/servicos" class="btn btn-primary btn-lg">Explorar serviços</a>
-      <a href="/autenticacao/cadastro" class="btn btn-outline-secondary btn-lg">Criar conta grátis</a>
+  <div class="af-carousel-track" id="af-carousel">
+    <div class="af-carousel-slide">
+      <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80" alt="Profissionais">
+      <div class="af-carousel-overlay"></div>
     </div>
+    <div class="af-carousel-slide">
+      <img src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&w=1400&q=80" alt="Espaço">
+      <div class="af-carousel-overlay"></div>
+    </div>
+    <div class="af-carousel-slide">
+      <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=80" alt="Reunião">
+      <div class="af-carousel-overlay"></div>
+    </div>
+  </div>
 
-    <div class="row g-4 mt-2 text-start">
-      <div class="col-md-6">
-        <div class="af-role-card client">
-          <div class="role-icon">🙋</div>
-          <h3>Sou Cliente</h3>
-          <p>Encontre, compare e agende serviços de profissionais qualificados. Confirme em poucos cliques.</p>
-          <a href="/autenticacao/cadastro?tipo=cliente" class="btn btn-primary">Quero agendar</a>
-        </div>
+  <div class="af-hero-content">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:5px 14px;border-radius:50px;font-size:12px;font-weight:600;color:#fff;margin-bottom:18px;backdrop-filter:blur(6px);">
+      <span style="width:7px;height:7px;border-radius:50%;background:#93c4ff;display:inline-block;animation:pulse 2s infinite;"></span>
+      Novo • Agendamento online em segundos
+    </div>
+    <h1>Agende serviços <span>sem complicação</span>.</h1>
+    <p>Conecte-se aos melhores prestadores da sua região e gerencie todos os seus agendamentos em um único lugar.</p>
+    <div class="af-hero-btns">
+      <a href="/servicos" class="af-btn af-btn-primary"><i class="ti ti-search"></i> Explorar serviços</a>
+      <a href="/autenticacao/cadastro" class="af-btn af-btn-outline"><i class="ti ti-user-plus"></i> Criar conta grátis</a>
+    </div>
+    <div class="af-role-cards">
+      <div class="af-role-card">
+        <div class="af-role-card-icon"><i class="ti ti-user" aria-hidden="true"></i></div>
+        <h3>Sou Cliente</h3>
+        <p>Encontre e agende serviços de profissionais qualificados.</p>
+        <a href="/autenticacao/cadastro?tipo=cliente" class="af-btn af-btn-primary af-btn-sm" style="background:rgba(255,255,255,.25);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.3);">Quero agendar</a>
       </div>
-      <div class="col-md-6">
-        <div class="af-role-card pro">
-          <div class="role-icon">🛠️</div>
-          <h3>Sou Prestador</h3>
-          <p>Cadastre seus serviços, defina seus horários e receba agendamentos direto na sua agenda.</p>
-          <a href="/autenticacao/cadastro?tipo=prestador" class="btn btn-success">Quero atender</a>
-        </div>
+      <div class="af-role-card">
+        <div class="af-role-card-icon"><i class="ti ti-briefcase" aria-hidden="true"></i></div>
+        <h3>Sou Prestador</h3>
+        <p>Cadastre serviços e receba agendamentos online.</p>
+        <a href="/autenticacao/cadastro?tipo=prestador" class="af-btn af-btn-primary af-btn-sm" style="background:rgba(255,255,255,.25);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.3);">Quero atender</a>
       </div>
     </div>
+  </div>
+
+  <div class="af-carousel-dots" id="af-dots">
+    <div class="af-dot active" onclick="afGoTo(0)"></div>
+    <div class="af-dot" onclick="afGoTo(1)"></div>
+    <div class="af-dot" onclick="afGoTo(2)"></div>
+  </div>
+  <div class="af-carousel-btns">
+    <button class="af-cbtn" onclick="afPrev()" aria-label="Anterior"><i class="ti ti-chevron-left"></i></button>
+    <button class="af-cbtn" onclick="afNext()" aria-label="Próximo"><i class="ti ti-chevron-right"></i></button>
   </div>
 </section>
 
-<section class="container">
-  <div class="af-section-title">
-    <span class="eyebrow">Por que AgendaFácil</span>
-    <h2>Feito para acabar com a fricção do agendamento</h2>
-  </div>
-  <div class="af-feature-grid">
-    <div class="af-feature">
-      <div class="ficon">⚡</div>
+<section class="af-features-section">
+  <h2>Por que AgendaFácil?</h2>
+  <div class="af-features-grid">
+    <div class="af-feature-card">
+      <i class="ti ti-bolt" aria-hidden="true"></i>
       <h4>Confirmação instantânea</h4>
       <p>Veja horários disponíveis em tempo real e confirme sem trocar mensagens.</p>
     </div>
-    <div class="af-feature">
-      <div class="ficon">📆</div>
+    <div class="af-feature-card">
+      <i class="ti ti-calendar-stats" aria-hidden="true"></i>
       <h4>Horários inteligentes</h4>
       <p>Cada prestador define sua disponibilidade. Você só vê o que pode reservar.</p>
     </div>
-    <div class="af-feature">
-      <div class="ficon">🔒</div>
+    <div class="af-feature-card">
+      <i class="ti ti-shield-lock" aria-hidden="true"></i>
       <h4>Dados protegidos</h4>
       <p>Autenticação segura e privacidade dos seus dados em todas as etapas.</p>
     </div>
   </div>
 </section>
+
+<style>
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+</style>
+<script>
+(function(){
+  let cur=0; const total=3;
+  const track=document.getElementById('af-carousel');
+  const dots=document.querySelectorAll('.af-dot');
+  let timer;
+  function goTo(n){ cur=(n+total)%total; track.style.transform='translateX(-'+(cur*100)+'%)'; dots.forEach((d,i)=>d.classList.toggle('active',i===cur)); }
+  window.afGoTo=goTo; window.afNext=function(){goTo(cur+1)}; window.afPrev=function(){goTo(cur-1)};
+  function start(){ timer=setInterval(()=>goTo(cur+1),5000); }
+  function stop(){ clearInterval(timer); }
+  document.querySelector('.af-hero').addEventListener('mouseenter',stop);
+  document.querySelector('.af-hero').addEventListener('mouseleave',start);
+  start();
+})();
+</script>

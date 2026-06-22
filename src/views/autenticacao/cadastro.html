@@ -1,71 +1,112 @@
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
+<!-- src/views/autenticacao/cadastro.html -->
+<div class="af-auth-wrap">
+  <div class="af-auth-split" id="auth-split">
 
-          <h2 class="card-title text-center mb-1 fw-bold">Criar Conta</h2>
-          <p class="text-center text-muted small mb-4">Escolha como deseja se cadastrar</p>
-
-          <ul class="nav nav-pills nav-fill mb-4 register-type-nav">
-            <li class="nav-item">
-              <a class="nav-link {{#isCliente}}active{{/isCliente}}" href="/autenticacao/cadastro?tipo=cliente">
-                👤 Cliente
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {{#isPrestador}}active{{/isPrestador}}" href="/autenticacao/cadastro?tipo=prestador">
-                🛠️ Prestador
-              </a>
-            </li>
-          </ul>
-
-          <div class="alert alert-info py-2 small text-center mb-3">
-            <span id="textoDescricaoTipo">{{{descricao}}}</span>
-          </div>
-
-          {{#errors}}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              <strong>Erro:</strong> {{msg}}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-          {{/errors}}
-
-          <form method="POST" action="/autenticacao/cadastro">
-            <input type="hidden" id="campoTipo" name="tipo" value="{{tipo}}">
-
-            <div class="mb-3">
-              <label for="nome" class="form-label fw-semibold">Nome Completo</label>
-              <input type="text" class="form-control" id="nome" name="nome" placeholder="Seu nome completo" required>
-            </div>
-
-            <div class="mb-3">
-              <label for="email" class="form-label fw-semibold">Email</label>
-              <input type="email" class="form-control" id="email" name="email" placeholder="seu@email.com" required>
-            </div>
-
-            <div class="mb-3">
-              <label for="senha" class="form-label fw-semibold">Senha</label>
-              <input type="password" class="form-control" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required minlength="6">
-            </div>
-
-            <div class="mb-3 {{^showCnpj}}d-none{{/showCnpj}}" id="campoCnpj">
-               <label for="cnpj" class="form-label fw-semibold">CNPJ</label>
-               <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="Ex: 00.394.460/0001-41">
-            </div>
-            
-            <button type="submit" class="btn btn-primary w-100 py-2 mt-2 fw-semibold" id="botaoEnviar">
-              {{botaoLabel}}
-            </button>
-          </form>
-
-          <div class="text-center mt-3">
-            <p class="small text-muted">Já tem conta? <a href="/autenticacao/entrar" class="text-decoration-none">Faça login</a></p>
-          </div>
-
-        </div>
+    <div class="af-auth-visual dark" id="auth-visual">
+      <div class="af-auth-visual-icon" id="auth-icon">
+        <i class="ti ti-user-plus" aria-hidden="true"></i>
       </div>
+      <h2 id="auth-visual-title">Criar sua conta</h2>
+      <p id="auth-visual-desc">Junte-se a milhares de pessoas que já usam o AgendaFácil para gerenciar seus agendamentos.</p>
+      <div class="af-auth-visual-badge" id="auth-badge">
+        <i class="ti ti-users"></i> Comunidade AgendaFácil
+      </div>
+    </div>
+
+    <div class="af-auth-form-side">
+      <h3>Criar conta</h3>
+      <p class="af-sub">Escolha como deseja se cadastrar</p>
+
+      <div class="af-type-switch">
+        <a href="/autenticacao/cadastro?tipo=cliente"
+           class="{{#isCliente}}active{{/isCliente}}"
+           onclick="switchTipo('cliente',this)">
+          <i class="ti ti-user"></i> Cliente
+        </a>
+        <a href="/autenticacao/cadastro?tipo=prestador"
+           class="{{#isPrestador}}active{{/isPrestador}}"
+           onclick="switchTipo('prestador',this)">
+          <i class="ti ti-briefcase"></i> Prestador
+        </a>
+      </div>
+
+      <div class="af-alert af-alert-info" style="font-size:12px;margin-bottom:16px;">
+        <i class="ti ti-info-circle"></i> {{{descricao}}}
+      </div>
+
+      {{#errors}}
+        <div class="af-alert af-alert-danger"><i class="ti ti-alert-circle"></i> {{msg}}</div>
+      {{/errors}}
+
+      <form method="POST" action="/autenticacao/cadastro">
+        <input type="hidden" id="campoTipo" name="tipo" value="{{tipo}}">
+
+        <div class="af-fg">
+          <label for="nome">Nome Completo</label>
+          <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
+        </div>
+        <div class="af-fg">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+        </div>
+        <div class="af-fg">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required minlength="6">
+        </div>
+        {{#showCnpj}}
+        <div class="af-fg" id="campoCnpj">
+          <label for="cnpj">CNPJ</label>
+          <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0001-00">
+        </div>
+        {{/showCnpj}}
+
+        <button type="submit" class="af-btn af-btn-primary af-btn-block" style="padding:13px;margin-top:4px;">
+          <i class="ti ti-user-check"></i> {{botaoLabel}}
+        </button>
+      </form>
+
+      <p style="text-align:center;font-size:13px;color:#6b7ab5;margin-top:20px;">
+        Já tem conta? <a href="/autenticacao/entrar" style="color:#4f7ce8;font-weight:600;">Faça login</a>
+      </p>
     </div>
   </div>
 </div>
 
+<script>
+function switchTipo(tipo, el) {
+  const visual = document.getElementById('auth-visual');
+  const title  = document.getElementById('auth-visual-title');
+  const desc   = document.getElementById('auth-visual-desc');
+  const icon   = document.getElementById('auth-icon');
+  const badge  = document.getElementById('auth-badge');
+
+  if (tipo === 'prestador') {
+    visual.classList.remove('dark');
+    visual.classList.add('light');
+    title.textContent = 'Área do Prestador';
+    desc.textContent  = 'Cadastre seus serviços, configure seus horários e receba agendamentos automaticamente.';
+    icon.innerHTML    = '<i class="ti ti-briefcase" aria-hidden="true"></i>';
+    badge.innerHTML   = '<i class="ti ti-star"></i> Para profissionais e empresas';
+  } else {
+    visual.classList.remove('light');
+    visual.classList.add('dark');
+    title.textContent = 'Criar sua conta';
+    desc.textContent  = 'Junte-se a milhares de pessoas que já usam o AgendaFácil para gerenciar seus agendamentos.';
+    icon.innerHTML    = '<i class="ti ti-user-plus" aria-hidden="true"></i>';
+    badge.innerHTML   = '<i class="ti ti-users"></i> Comunidade AgendaFácil';
+  }
+
+  document.querySelectorAll('.af-type-switch a').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('campoTipo').value = tipo;
+}
+
+// aplicar estado inicial baseado no tipo vindo do servidor
+(function(){
+  const tipo = document.getElementById('campoTipo').value;
+  if (tipo === 'prestador') {
+    const el = document.querySelector('.af-type-switch a:last-child');
+    if (el) switchTipo('prestador', el);
+  }
+})();
+</script>

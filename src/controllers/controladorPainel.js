@@ -2,7 +2,8 @@ const Agendamento = require('../models/agendamento');
 const Servico = require('../models/servico');
 const Usuario = require('../models/usuario');
 const ServicoAgendamentos = require('../services/servicoAgendamentos');
-const { Op } = require('sequelize');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 const getPainelCliente = async (req, res, next) => {
   try {

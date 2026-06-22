@@ -1,4 +1,4 @@
-function tratadorDeErros(err, req, res, next) { // eslint-disable-line no-unused-vars
+function tratadorDeErros(err, req, res, next) {
   const status = err.status || 500;
   const mensagem = err.message || 'Erro interno do servidor';
 

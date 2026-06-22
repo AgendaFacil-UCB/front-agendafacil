@@ -1,55 +1,53 @@
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Meus Agendamentos</h1>
-
-            {{#agendamentos}}
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h5 class="card-title">{{nome_servico}}</h5>
-                                <p class="card-text">
-                                    <strong>Prestador:</strong> {{nome_prestador}}<br>
-                                    <strong>Data/Hora:</strong>
-                                    <span class="badge bg-info">{{data_agendamento}}</span><br>
-                                    <strong>Status:</strong>
-                                    {{#ehPendente}}
-                                        <span class="badge bg-warning">Pendente</span>
-                                    {{/ehPendente}}
-                                    {{#ehConfirmado}}
-                                        <span class="badge bg-success">Confirmado</span>
-                                    {{/ehConfirmado}}
-                                    {{#ehCancelado}}
-                                        <span class="badge bg-danger">Cancelado</span>
-                                    {{/ehCancelado}}
-                                </p>
-                                <p class="card-text">
-                                    <strong>Telefone do Prestador:</strong> {{telefone_prestador}}
-                                </p>
-                            </div>
-                            <div class="col-md-4 text-end">
-                                {{#ehPendente}}
-                                    <form method="POST" action="/agendamentos/{{id}}/cancelar" class="d-inline" onsubmit="return confirm('Deseja realmente cancelar este agendamento?')">
-                                        <button class="btn btn-danger btn-sm" type="submit">Cancelar</button>
-                                    </form>
-                                {{/ehPendente}}
-                                {{#ehConfirmado}}
-                                    <form method="POST" action="/agendamentos/{{id}}/cancelar" class="d-inline" onsubmit="return confirm('Deseja realmente cancelar este agendamento?')">
-                                        <button class="btn btn-danger btn-sm" type="submit">Cancelar</button>
-                                    </form>
-                                {{/ehConfirmado}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {{/agendamentos}}
-
-            {{^agendamentos}}
-                <div class="alert alert-info">
-                    Você não possui agendamentos. <a href="/servicos">Clique aqui</a> para agendar um serviço.
-                </div>
-            {{/agendamentos}}
-        </div>
+<!-- src/views/agendamentos/meus-agendamentos.html -->
+<div class="af-page">
+  <div class="af-page-header">
+    <div>
+      <h1>Meus Agendamentos</h1>
+      <p>Visualize e gerencie seus agendamentos.</p>
     </div>
+    <a href="/painel/cliente" class="af-btn af-btn-outline"><i class="ti ti-arrow-left"></i> Voltar ao painel</a>
+  </div>
+
+  {{#agendamentos}}
+    <div class="af-list-item">
+      <div class="af-list-icon i1"><i class="ti ti-calendar-event" aria-hidden="true"></i></div>
+      <div class="af-list-body">
+        <strong>{{nome_servico}}</strong>
+        <span>
+          <i class="ti ti-user" style="font-size:11px;"></i> {{nome_prestador}}
+          &nbsp;·&nbsp;
+          <i class="ti ti-clock" style="font-size:11px;"></i> {{data_agendamento}}
+          &nbsp;·&nbsp;
+          <i class="ti ti-phone" style="font-size:11px;"></i> {{telefone_prestador}}
+        </span>
+        <div style="margin-top:6px;">
+          {{#ehPendente}}<span class="af-badge af-badge-warn">Pendente</span>{{/ehPendente}}
+          {{#ehConfirmado}}<span class="af-badge af-badge-success">Confirmado</span>{{/ehConfirmado}}
+          {{#ehCancelado}}<span class="af-badge af-badge-danger">Cancelado</span>{{/ehCancelado}}
+        </div>
+      </div>
+      <div class="af-list-actions">
+        {{#ehPendente}}
+          <form method="POST" action="/agendamentos/{{id}}/cancelar" onsubmit="return confirm('Cancelar este agendamento?')">
+            <button type="submit" class="af-btn af-btn-danger af-btn-sm"><i class="ti ti-x"></i> Cancelar</button>
+          </form>
+        {{/ehPendente}}
+        {{#ehConfirmado}}
+          <form method="POST" action="/agendamentos/{{id}}/cancelar" onsubmit="return confirm('Cancelar este agendamento?')">
+            <button type="submit" class="af-btn af-btn-danger af-btn-sm"><i class="ti ti-x"></i> Cancelar</button>
+          </form>
+        {{/ehConfirmado}}
+      </div>
+    </div>
+  {{/agendamentos}}
+
+  {{^agendamentos}}
+    <div class="af-card">
+      <div class="af-empty">
+        <i class="ti ti-calendar-off" aria-hidden="true"></i>
+        <p>Você não possui agendamentos.<br>
+        <a href="/servicos" style="color:#4f7ce8;font-weight:600;">Clique aqui para agendar um serviço</a>.</p>
+      </div>
+    </div>
+  {{/agendamentos}}
 </div>

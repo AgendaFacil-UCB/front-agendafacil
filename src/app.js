@@ -14,7 +14,6 @@ const tratadorDeErros = require('./middleware/tratadorDeErros');
 function criarApp() {
   const app = express();
 
-  // Ler layout Mustache uma única vez
   const caminhoLayout = path.join(__dirname, 'views', 'layout.html');
   const modeloLayout = fs.readFileSync(caminhoLayout, 'utf8');
 

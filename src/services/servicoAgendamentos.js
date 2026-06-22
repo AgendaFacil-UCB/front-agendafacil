@@ -4,22 +4,70 @@ const Usuario = require('../models/usuario');
 const ServicoDisponibilidades = require('../models/servico_disponibilidades');
 const { Op } = require('sequelize');
 
+const TIMEZONE_AGENDAMENTO = 'America/Sao_Paulo';
+const OFFSET_AGENDAMENTO = '-03:00';
+
+const parseDataISO = (dataStr) => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dataStr || '');
+  if (!match) return null;
+
+  const [, anoStr, mesStr, diaStr] = match;
+  const ano = Number(anoStr);
+  const mes = Number(mesStr);
+  const dia = Number(diaStr);
+  const dataReferencia = new Date(`${dataStr}T12:00:00${OFFSET_AGENDAMENTO}`);
+
+  if (
+    Number.isNaN(dataReferencia.getTime()) ||
+    dataReferencia.getUTCFullYear() !== ano ||
+    dataReferencia.getUTCMonth() + 1 !== mes ||
+    dataReferencia.getUTCDate() !== dia
+  ) {
+    return null;
+  }
+
+  return { dataReferencia };
+};
+
+const criarDataAgendamento = (dataStr, horaStr, segundos = 0, milissegundos = 0) => {
+  const dataISO = parseDataISO(dataStr);
+  const horaMatch = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(horaStr || '');
+
+  if (!dataISO || !horaMatch) return null;
+
+  const [, hora, minuto] = horaMatch;
+  const data = new Date(
+    `${dataStr}T${hora}:${minuto}:${String(segundos).padStart(2, '0')}.${String(milissegundos).padStart(3, '0')}${OFFSET_AGENDAMENTO}`
+  );
+
+  return Number.isNaN(data.getTime()) ? null : data;
+};
+
+const formatarDataHora = (data) =>
+  new Intl.DateTimeFormat('pt-BR', {
+    timeZone: TIMEZONE_AGENDAMENTO,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(data));
+
+const formatarHora = (data) =>
+  new Intl.DateTimeFormat('pt-BR', {
+    timeZone: TIMEZONE_AGENDAMENTO,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(new Date(data));
+
 const processarAgendamentos = (agendamentos) =>
   agendamentos.map(agendamento => {
     const json = agendamento.toJSON ? agendamento.toJSON() : agendamento;
     return {
       ...json,
-      data_agendamento: json.inicioAgendamento
-        ? new Date(json.inicioAgendamento).toLocaleString('pt-BR', {
-            day: '2-digit', month: '2-digit', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-          })
-        : '',
-      fim_agendamento: json.fimAgendamento
-        ? new Date(json.fimAgendamento).toLocaleString('pt-BR', {
-            hour: '2-digit', minute: '2-digit'
-          })
-        : '',
+      data_agendamento: json.inicioAgendamento ? formatarDataHora(json.inicioAgendamento) : '',
+      fim_agendamento: json.fimAgendamento ? formatarHora(json.fimAgendamento) : '',
 
       nome_servico: json.servico ? json.servico.nome : '',
       nome_prestador: json.prestador ? json.prestador.nome : '',
@@ -46,19 +94,19 @@ const minutosParaHora = (minutos) => {
 const getHorariosDisponiveis = async (servicoId, dataStr) => {
   const servico = await Servico.findByPk(servicoId);
   if (!servico) {
-    const err = new Error('Serviço não encontrado');
+    const err = new Error('Servi\u00e7o n\u00e3o encontrado');
     err.code = 'SERVICO_NAO_ENCONTRADO';
     throw err;
   }
 
-  const data = new Date(`${dataStr}T12:00:00`);
-  if (isNaN(data.getTime())) {
-    const err = new Error('Data inválida');
+  const dataISO = parseDataISO(dataStr);
+  if (!dataISO) {
+    const err = new Error('Data inv\u00e1lida');
     err.code = 'DATA_INVALIDA';
     throw err;
   }
 
-  const diaDaSemana = data.getDay();
+  const diaDaSemana = dataISO.dataReferencia.getUTCDay();
 
   const disponibilidades = await ServicoDisponibilidades.findAll({
     where: { servicoId, diaDaSemana }
@@ -68,8 +116,8 @@ const getHorariosDisponiveis = async (servicoId, dataStr) => {
     return [];
   }
 
-  const inicioDia = new Date(`${dataStr}T00:00:00`);
-  const fimDia = new Date(`${dataStr}T23:59:59`);
+  const inicioDia = criarDataAgendamento(dataStr, '00:00');
+  const fimDia = criarDataAgendamento(dataStr, '23:59', 59, 999);
 
   const agendamentosDoDia = await Agendamento.findAll({
     where: {
@@ -80,8 +128,8 @@ const getHorariosDisponiveis = async (servicoId, dataStr) => {
   });
 
   const ocupados = agendamentosDoDia.map(a => ({
-    inicio: horaParaMinutos(new Date(a.inicioAgendamento).toTimeString().slice(0, 5)),
-    fim: horaParaMinutos(new Date(a.fimAgendamento).toTimeString().slice(0, 5))
+    inicio: horaParaMinutos(formatarHora(a.inicioAgendamento)),
+    fim: horaParaMinutos(formatarHora(a.fimAgendamento))
   }));
 
   const duracao = servico.duracao;
@@ -111,24 +159,25 @@ const getHorariosDisponiveis = async (servicoId, dataStr) => {
 const criar = async ({ servicoId, data, horaInicio, clienteId }) => {
   const servico = await Servico.findByPk(servicoId);
   if (!servico) {
-    const err = new Error('Serviço não encontrado');
+    const err = new Error('Servi\u00e7o n\u00e3o encontrado');
     err.code = 'SERVICO_NAO_ENCONTRADO';
     throw err;
   }
 
-  const dataInicio = new Date(`${data}T${horaInicio}:00`);
-  if (isNaN(dataInicio.getTime())) {
-    const err = new Error('Data/hora inválida');
+  const dataInicio = criarDataAgendamento(data, horaInicio);
+  if (!dataInicio) {
+    const err = new Error('Data/hora inv\u00e1lida');
     err.code = 'DATA_INVALIDA';
     throw err;
   }
+
   const dataFim = new Date(dataInicio.getTime() + servico.duracao * 60 * 1000);
 
   const horariosDisponiveis = await getHorariosDisponiveis(servicoId, data);
   const horarioValido = horariosDisponiveis.some(h => h.inicio === horaInicio);
 
   if (!horarioValido) {
-    const err = new Error('Horário não está disponível');
+    const err = new Error('Hor\u00e1rio n\u00e3o est\u00e1 dispon\u00edvel');
     err.code = 'CONFLITO';
     throw err;
   }
@@ -154,20 +203,20 @@ const criar = async ({ servicoId, data, horaInicio, clienteId }) => {
 const cancelar = async (agendamentoId, usuarioId) => {
   const agendamento = await Agendamento.findByPk(agendamentoId);
   if (!agendamento) {
-    const err = new Error('Agendamento não encontrado');
+    const err = new Error('Agendamento n\u00e3o encontrado');
     err.code = 'NAO_ENCONTRADO';
     throw err;
   }
 
   const ehProprietario = agendamento.clienteId === usuarioId || agendamento.prestadorId === usuarioId;
   if (!ehProprietario) {
-    const err = new Error('Sem permissão');
+    const err = new Error('Sem permiss\u00e3o');
     err.code = 'PROIBIDO';
     throw err;
   }
 
   if (agendamento.status === 'cancelado') {
-    const err = new Error('Agendamento já cancelado');
+    const err = new Error('Agendamento j\u00e1 cancelado');
     err.code = 'JA_CANCELADO';
     throw err;
   }
@@ -178,13 +227,13 @@ const cancelar = async (agendamentoId, usuarioId) => {
 const confirmar = async (agendamentoId, prestadorId) => {
   const agendamento = await Agendamento.findByPk(agendamentoId);
   if (!agendamento) {
-    const err = new Error('Agendamento não encontrado');
+    const err = new Error('Agendamento n\u00e3o encontrado');
     err.code = 'NAO_ENCONTRADO';
     throw err;
   }
 
   if (agendamento.prestadorId !== prestadorId) {
-    const err = new Error('Sem permissão');
+    const err = new Error('Sem permiss\u00e3o');
     err.code = 'PROIBIDO';
     throw err;
   }
@@ -224,6 +273,18 @@ const buscarPorPrestador = async (prestadorId) => {
   return processarAgendamentos(agendamentos);
 };
 
+const getDataHojeInput = () => {
+  const partes = new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE_AGENDAMENTO,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(new Date());
+
+  const valores = Object.fromEntries(partes.map(parte => [parte.type, parte.value]));
+  return `${valores.year}-${valores.month}-${valores.day}`;
+};
+
 module.exports = {
   criar,
   cancelar,
@@ -231,5 +292,6 @@ module.exports = {
   buscarPorCliente,
   buscarPorPrestador,
   processarAgendamentos,
-  getHorariosDisponiveis
+  getHorariosDisponiveis,
+  getDataHojeInput
 };

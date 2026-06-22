@@ -60,8 +60,7 @@ const getDetalhe = async (req, res) => {
       }
     }
 
-    const hoje = new Date();
-    const minDate = hoje.toISOString().slice(0, 10);
+    const minDate = ServicoAgendamentos.getDataHojeInput();
 
     res.render('servicos/detalhe', {
       title: servico.nome,

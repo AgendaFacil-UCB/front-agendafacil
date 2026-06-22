@@ -1,65 +1,57 @@
-<div class="container">
-
-  <div class="af-page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+<!-- src/views/painel/cliente.html -->
+<div class="af-page">
+  <div class="af-page-header">
     <div>
-      <span class="eyebrow">Painel do Cliente</span>
-      <h1>Olá, {{usuario.nome}} 👋</h1>
+      <h1>Olá, {{usuario.nome}}!</h1>
       <p>Gerencie seus agendamentos e descubra novos serviços.</p>
     </div>
-    <div class="header-actions">
-      <a href="/servicos" class="btn btn-primary">Buscar serviços</a>
-      <a href="/agendamentos/meus-agendamentos" class="btn btn-outline-secondary">Meus agendamentos</a>
+    <div class="af-hdr-actions">
+      <a href="/servicos" class="af-btn af-btn-primary"><i class="ti ti-search"></i> Buscar serviços</a>
+      <a href="/agendamentos/meus-agendamentos" class="af-btn af-btn-outline"><i class="ti ti-calendar-list"></i> Meus agendamentos</a>
     </div>
   </div>
 
-  <div class="row g-3 mb-4">
-    <div class="col-md-4">
-      <div class="af-stat coral">
-        <div class="icon">📅</div>
-        <div>
-          <div class="label">Meus agendamentos</div>
-          <div class="value">{{totalAgendamentos}}</div>
-        </div>
-      </div>
+  <div class="af-metrics" style="grid-template-columns:repeat(1,1fr);max-width:280px;">
+    <div class="af-met m0">
+      <div class="af-met-icon"><i class="ti ti-calendar-stats" aria-hidden="true"></i></div>
+      <p class="af-met-val">{{totalAgendamentos}}</p>
+      <p class="af-met-label">Meus agendamentos</p>
+      <div class="af-met-arr"><i class="ti ti-arrow-up-right"></i></div>
     </div>
   </div>
 
-  <div class="row g-4">
-    <div class="col-lg-8">
-      <div class="d-flex align-items-center justify-content-between mb-3">
-        <h3 class="mb-0">Próximos agendamentos</h3>
-        <a href="/agendamentos/meus-agendamentos" class="small text-decoration-none">Ver todos →</a>
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;margin-top:20px;">
+    <div class="af-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <h2 style="font-size:16px;">Próximos agendamentos</h2>
+        <a href="/agendamentos/meus-agendamentos" style="font-size:12px;color:#4f7ce8;font-weight:600;">Ver todos →</a>
       </div>
-
       {{#proximosAgendamentos}}
-        <div class="card af-item-card mb-3">
-          <div class="card-body d-flex justify-content-between align-items-start flex-wrap gap-3">
-            <div>
-              <h5 class="card-title mb-1">{{nome_servico}}</h5>
-              <p class="card-text mb-0 small text-muted">
-                <strong>Prestador:</strong> {{nome_prestador}}
-              </p>
-            </div>
-            <span class="badge bg-info">{{data_agendamento}}</span>
+        <div class="af-list-item">
+          <div class="af-list-icon i1"><i class="ti ti-calendar-event" aria-hidden="true"></i></div>
+          <div class="af-list-body">
+            <strong>{{nome_servico}}</strong>
+            <span><i class="ti ti-user" style="font-size:11px;"></i> {{nome_prestador}} · <i class="ti ti-clock" style="font-size:11px;"></i> {{data_agendamento}}</span>
           </div>
+          <span class="af-badge af-badge-blue">Agendado</span>
         </div>
       {{/proximosAgendamentos}}
-
       {{^proximosAgendamentos}}
-        <div class="alert alert-info">Você não possui agendamentos próximos. <a href="/servicos" class="alert-link">Explore serviços</a>.</div>
+        <div class="af-empty">
+          <i class="ti ti-calendar-off" aria-hidden="true"></i>
+          <p>Você não possui agendamentos próximos.<br>
+          <a href="/servicos" style="color:#4f7ce8;font-weight:600;">Explore serviços disponíveis</a>.</p>
+        </div>
       {{/proximosAgendamentos}}
     </div>
 
-    <div class="col-lg-4">
-      <div class="card af-aside">
-        <div class="card-body">
-          <h5 class="card-title">Ações rápidas</h5>
-          <p class="small text-muted mb-3">Atalhos para o que você mais faz aqui.</p>
-          <a href="/servicos" class="btn btn-primary w-100 mb-2">🔎 Buscar serviços</a>
-          <a href="/agendamentos/meus-agendamentos" class="btn btn-outline-secondary w-100">📋 Ver agendamentos</a>
-        </div>
+    <div class="af-card">
+      <h2 style="font-size:15px;margin-bottom:6px;">Ações rápidas</h2>
+      <p style="font-size:12px;color:#6b7ab5;margin-bottom:18px;">Atalhos para o que você mais faz aqui.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="/servicos" class="af-btn af-btn-primary af-btn-block"><i class="ti ti-search"></i> Buscar serviços</a>
+        <a href="/agendamentos/meus-agendamentos" class="af-btn af-btn-outline af-btn-block"><i class="ti ti-calendar-list"></i> Ver agendamentos</a>
       </div>
     </div>
   </div>
-
 </div>
