@@ -25,4 +25,6 @@ router.post('/:id/confirmar', exigirAutenticacao, controladorAgendamentos.postCo
 
 router.post('/:id/cancelar', exigirAutenticacao, controladorAgendamentos.postCancelar);
 
+router.post('/:id/deletar', exigirAutenticacao, controladorAgendamentos.excluirAgendamento);
+
 module.exports = router;

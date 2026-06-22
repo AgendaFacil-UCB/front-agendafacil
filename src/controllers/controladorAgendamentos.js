@@ -109,11 +109,37 @@ const postCancelar = async (req, res, next) => {
   }
 };
 
+const excluirAgendamento = async (req, res) => {
+  try {
+    const agendamentoId = req.params.id;
+    const usuarioId = req.session.usuario.id; 
+
+    await ServicoAgendamentos.deletar(agendamentoId, usuarioId);
+
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+      return res.json({ message: 'Agendamento Deletado com sucesso!' });
+    }
+    res.redirect('back');
+  } catch (error) {
+    console.error(error);
+    
+    if (error.code === 'NAO_ENCONTRADO') {
+      return res.status(404).send('Agendamento não encontrado.');
+    }
+    if (error.code === 'PROIBIDO') {
+      return res.status(403).send('Você não tem permissão para deletar este agendamento.');
+    }
+    
+    return res.status(500).send('Erro interno ao tentar deletar.');
+  }
+};
+
 module.exports = {
   getHorarios,
   postCriar,
   getMeusAgendamentos,
   getAgendamentosPrestador,
   postConfirmar,
-  postCancelar
+  postCancelar,
+  excluirAgendamento
 };

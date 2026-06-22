@@ -37,6 +37,11 @@
             <button type="submit" class="af-btn af-btn-danger af-btn-sm"><i class="ti ti-x"></i> Cancelar</button>
           </form>
         {{/ehConfirmado}}
+       {{#ehCancelado}}
+    <form method="POST" action="/agendamentos/{{id}}/deletar" onsubmit="return confirm('Deseja excluir permanentemente este agendamento do histórico?')">
+      <button type="submit" class="af-btn af-btn-danger af-btn-sm"><i class="ti ti-trash"></i> Deletar</button>
+    </form>
+    {{/ehCancelado}}
       </div>
     </div>
   {{/agendamentos}}

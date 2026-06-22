@@ -273,6 +273,24 @@ const buscarPorPrestador = async (prestadorId) => {
   return processarAgendamentos(agendamentos);
 };
 
+const deletar = async (agendamentoId, usuarioId) => {
+  const agendamento = await Agendamento.findByPk(agendamentoId);
+  if (!agendamento) {
+    const err = new Error('Agendamento n\u00e3o encontrado');
+    err.code = 'NAO_ENCONTRADO';
+    throw err;
+  }
+
+  const ehProprietario = agendamento.clienteId === usuarioId || agendamento.prestadorId === usuarioId;
+  if (!ehProprietario) {
+    const err = new Error('Sem permiss\u00e3o');
+    err.code = 'PROIBIDO';
+    throw err;
+  }
+
+  await agendamento.destroy();
+}
+
 const getDataHojeInput = () => {
   const partes = new Intl.DateTimeFormat('en-CA', {
     timeZone: TIMEZONE_AGENDAMENTO,
@@ -293,5 +311,6 @@ module.exports = {
   buscarPorPrestador,
   processarAgendamentos,
   getHorariosDisponiveis,
-  getDataHojeInput
+  getDataHojeInput,
+  deletar
 };
